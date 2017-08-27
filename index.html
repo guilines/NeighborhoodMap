@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" data-framework="knockoutjs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>Neighborhood Map</title>
+
+    <!--Load Style-->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3 row-header locations-row">
+            <span class="text-row">Madrid Locations</span>
+        </div>
+        <div class="col-md-9 row-header options-row"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 menu-bar">
+            <input class="filter-options" id="filter" placeholder="Location">
+            <input type="button" value="Filter" class="filter-btn">
+            <div id=display_locations class="locations"></div>
+            <ul data-bind="foreach markers">
+                <li>
+                    <span data-bind="text: title" class="locations"></span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-9">
+            <div id="map" class="map-area"></div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--Load Scripts-->
+<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
+<script async type="text/javascript" src="js/bootstrap.min.js"></script>
+<script async type="text/javascript" src="js/knockout-3.4.2.js"></script>
+<script async src="js/app.js"></script>
+
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyDtr_cNX4hNvjTCs5xSL-JIGngGFzlT6ho&v=3&callback=startApp">
+</script>
+
+
+</body>
+</html>
