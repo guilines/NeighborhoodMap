@@ -21,11 +21,14 @@
     <div class="row">
         <div class="col-md-3 menu-bar">
             <input class="filter-options" id="filter" placeholder="Location">
-            <input type="button" value="Filter" class="filter-btn">
+            <input type="button" value="Filter" class="filter-btn"
+                   data-bind="click: filterOptions">
             <div id=display_locations class="locations"></div>
-            <ul data-bind="foreach markers">
+            <ul data-bind="foreach: markers">
                 <li>
-                    <span data-bind="text: title" class="locations"></span>
+                    <span data-bind="text: title,
+                        event: { mouseover: highlightMarker, mouseout: defaultMarker }"
+                          class="locations"></span>
                 </li>
             </ul>
         </div>
