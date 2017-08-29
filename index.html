@@ -26,9 +26,9 @@
             data-bind="textInput: searchLocation">
             <input type="button" value="Filter" class="filter-btn">
             <div id=display_locations class="locations"></div>
-            <ul data-bind="template: {name:'location', foreach: filteredMarkers}">
+            <ul data-bind="template: {name:'marker', foreach: filteredMarkers}">
             </ul>
-            <script type="text/html" id="location">
+            <script type="text/html" id="marker">
                 <li>
                     <span class="locations"
                           data-bind="text: title,event: { mouseover: highlightMarker, mouseout: defaultMarker } ">

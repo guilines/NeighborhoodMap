@@ -45,14 +45,15 @@ var ViewModel = function() {
 
     this.filteredMarkers = ko.computed(function () {
         var search = self.searchLocation().toLowerCase();
-        return ko.utils.arrayFilter(self.markers(), function (location) {
-            return location.title().toLowerCase().indexOf(search) >=0;
+        return ko.utils.arrayFilter(self.markers(), function (marker) {
+            var status = marker.title().toLowerCase().indexOf(search) >=0;
+            marker.display(status);
+            return status;
         });
 
     });
 
     this.mapOptions = ko.observableArray();
-
 
 };
 
@@ -60,9 +61,8 @@ var ViewModel = function() {
 var Marker = function (loc,idx) {
     var self = this;
     this.title = ko.observable(loc.title);
-    // this.title = loc.title;
     this.position = ko.observable(loc.position);
-    this.display=true;
+
 
     function makeMarkerIcon(markerColor) {
         var markerImage = new google.maps.MarkerImage(
@@ -103,6 +103,22 @@ var Marker = function (loc,idx) {
         marker.setIcon(self.defaultIcon);
         marker.setAnimation(null);
     };
+
+
+    this.display = ko.computed({
+        read: function () {
+            {}
+        },
+
+        write: function (status) {
+            if(!status){
+                marker.setMap(null);
+            } else {
+                marker.setMap(map);
+            }
+        }
+
+    },this);
 
 };
 
