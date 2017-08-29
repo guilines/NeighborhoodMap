@@ -13,7 +13,8 @@ var data = {
         {title: 'Plaza del Callao', position: {lat: 40.419856, lng: -3.705831}},
         {title: 'Plaza de España', position: {lat: 40.423309, lng: -3.712211}},
         {title: 'Plaza de Colón', position: {lat: 40.424905, lng: -3.689134}},
-        {title: 'Parque de El Retiro', position: {lat: 40.415404, lng: -3.684504}}
+        {title: 'Parque de El Retiro', position: {lat: 40.415404, lng: -3.684504}},
+        {title: 'Puerta de Toledo', position: {lat: 40.406725, lng: -3.711610}}
     ]
 };
 
@@ -62,6 +63,7 @@ var Marker = function (loc,idx) {
     var self = this;
     this.title = ko.observable(loc.title);
     this.position = ko.observable(loc.position);
+    this.idx=idx;
 
 
     function makeMarkerIcon(markerColor) {
@@ -89,21 +91,25 @@ var Marker = function (loc,idx) {
 
     marker.addListener('mouseover', function() {
         this.setIcon(self.highlightedIcon);
+        $('#marker_'+self.idx).addClass('highlighted-locations');
+
     });
     marker.addListener('mouseout', function() {
         this.setIcon(self.defaultIcon);
+        $('#marker_'+self.idx).removeClass('highlighted-locations');
     });
 
     this.highlightMarker = function () {
         marker.setIcon(self.highlightedIcon);
         marker.setAnimation(google.maps.Animation.BOUNCE);
+        $('#marker_'+self.idx).addClass('highlighted-locations');
     };
 
     this.defaultMarker = function () {
         marker.setIcon(self.defaultIcon);
         marker.setAnimation(null);
+        $('#marker_'+self.idx).removeClass('highlighted-locations');
     };
-
 
     this.display = ko.computed({
         read: function () {

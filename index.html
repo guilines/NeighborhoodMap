@@ -24,21 +24,20 @@
         <div class="col-md-3 menu-bar">
             <input class="filter-options" id="filter" placeholder="Search" type="search"
             data-bind="textInput: searchLocation">
-            <input type="button" value="Filter" class="filter-btn">
+            <!--<input type="button" value="Filter" class="filter-btn">-->
             <div id=display_locations class="locations"></div>
             <ul data-bind="template: {name:'marker', foreach: filteredMarkers}">
             </ul>
             <script type="text/html" id="marker">
                 <li>
                     <span class="locations"
-                          data-bind="text: title,event: { mouseover: highlightMarker, mouseout: defaultMarker } ">
+                          data-bind="text: title,event: { mouseover: highlightMarker,
+                                                        mouseout: defaultMarker },
+                                        attr: {'id': 'marker_' + idx}">
                     </span>
                 </li>
             </script>
         </div>
-
-
-
         <div class="col-md-9">
             <div id="map" class="map-area"></div>
         </div>
