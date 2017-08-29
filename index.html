@@ -16,22 +16,29 @@
         <div class="col-md-3 row-header locations-row">
             <span class="text-row">Madrid Locations</span>
         </div>
-        <div class="col-md-9 row-header options-row"></div>
+        <div class="col-md-9 row-header options-row">
+            <img src="images/burger_menu.svg" alt="burger menu icon" class="burger_menu">
+        </div>
     </div>
     <div class="row">
         <div class="col-md-3 menu-bar">
-            <input class="filter-options" id="filter" placeholder="Location">
-            <input type="button" value="Filter" class="filter-btn"
-                   data-bind="click: filterOptions">
+            <input class="filter-options" id="filter" placeholder="Search" type="search"
+            data-bind="textInput: searchLocation">
+            <input type="button" value="Filter" class="filter-btn">
             <div id=display_locations class="locations"></div>
-            <ul data-bind="foreach: markers">
-                <li>
-                    <span data-bind="text: title,
-                        event: { mouseover: highlightMarker, mouseout: defaultMarker }"
-                          class="locations"></span>
-                </li>
+            <ul data-bind="template: {name:'location', foreach: filteredMarkers}">
             </ul>
+            <script type="text/html" id="location">
+                <li>
+                    <span class="locations"
+                          data-bind="text: title,event: { mouseover: highlightMarker, mouseout: defaultMarker } ">
+                    </span>
+                </li>
+            </script>
         </div>
+
+
+
         <div class="col-md-9">
             <div id="map" class="map-area"></div>
         </div>

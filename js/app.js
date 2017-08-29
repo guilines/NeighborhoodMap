@@ -6,7 +6,7 @@ var data = {
     map : {
         // currentLocation: 'Madrid, Spain',
         currentLocation: {lat: 40.416932, lng: -3.703797},
-        zoom : 15,
+        zoom : 13,
         typeControl: false
     },
     locations : [
@@ -36,16 +36,23 @@ var ViewModel = function() {
 
     var map = new Map();
 
-    this.markers = ko.observableArray();
+    this.searchLocation = ko.observable('');
 
+    this.markers = ko.observableArray();
     data.locations.forEach(function (loc,idx) {
         self.markers.push(new Marker(loc,idx));
     });
-    // this.mapOptions = ko.observableArray();
 
-    this.filterOptions = function () {
-        alert('Filter this');
-    }
+    this.filteredMarkers = ko.computed(function () {
+        var search = self.searchLocation().toLowerCase();
+        return ko.utils.arrayFilter(self.markers(), function (location) {
+            return location.title().toLowerCase().indexOf(search) >=0;
+        });
+
+    });
+
+    this.mapOptions = ko.observableArray();
+
 
 };
 
@@ -53,8 +60,9 @@ var ViewModel = function() {
 var Marker = function (loc,idx) {
     var self = this;
     this.title = ko.observable(loc.title);
+    // this.title = loc.title;
     this.position = ko.observable(loc.position);
-    this.display=ko.observable(true);
+    this.display=true;
 
     function makeMarkerIcon(markerColor) {
         var markerImage = new google.maps.MarkerImage(
@@ -67,7 +75,7 @@ var Marker = function (loc,idx) {
         return markerImage;
     }
 
-    this.highlightedIcon = makeMarkerIcon('FFFF24');
+    this.highlightedIcon = makeMarkerIcon('14B467');
     this.defaultIcon = makeMarkerIcon('FF6146');
 
     var marker = new google.maps.Marker({
@@ -88,10 +96,12 @@ var Marker = function (loc,idx) {
 
     this.highlightMarker = function () {
         marker.setIcon(self.highlightedIcon);
+        marker.setAnimation(google.maps.Animation.BOUNCE);
     };
 
     this.defaultMarker = function () {
         marker.setIcon(self.defaultIcon);
+        marker.setAnimation(null);
     };
 
 };
