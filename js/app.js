@@ -22,7 +22,7 @@ var data = {
 };
 
 /* === Map ===*/
-var Map = function() {
+var GoogleMap = function() {
     map = new google.maps.Map($('#map')[0], {
             center: data.map.currentLocation,
             // center: getLocationFromAddress(data.map.currentLocation),
@@ -39,7 +39,7 @@ var Map = function() {
 var ViewModel = function() {
     var self = this;
 
-    var google_map = new Map();
+    var google_map = new GoogleMap();
 
     this.searchLocation = ko.observable('');
 
