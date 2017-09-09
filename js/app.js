@@ -1,5 +1,8 @@
 var google = google || {};
 var map;
+var infoWindow = undefined;
+
+
 
 /* === Model ===*/
 var data = {
@@ -28,6 +31,7 @@ var Map = function() {
             // styles: styles
     });
 
+    infoWindow = new google.maps.InfoWindow();
 };
 
 /* === ViewModel ===*/
@@ -56,6 +60,14 @@ var ViewModel = function() {
 
     this.mapOptions = ko.observableArray();
 
+    this.display_burgerMenu = function () {
+        $('.menu-bar').css('width','250px');
+    };
+
+    this.close_burgerMenu = function () {
+        $('.menu-bar').css('width','0');
+    }
+
 };
 
 /* === Current Locations===*/
@@ -64,6 +76,19 @@ var Marker = function (loc,idx) {
     this.title = ko.observable(loc.title);
     this.position = ko.observable(loc.position);
     this.idx=idx;
+    // this.address = ko.computed(function () {
+    //     getAddressFromLocation(self.position());
+    // });
+    this.address = '';
+    getAddressFromLocation(this);
+
+    this.countCheckin = '';
+    getFoursquareInfo(this,loc.position);
+
+    this.photoSrc = ko.observableArray([]);
+    getPhotoIdByLocation(this,loc.position);
+
+
 
 
     function makeMarkerIcon(markerColor) {
@@ -99,6 +124,10 @@ var Marker = function (loc,idx) {
         $('#marker_'+self.idx).removeClass('highlighted-locations');
     });
 
+    marker.addListener('click', function () {
+        displayInfo(this,self.address(),self.countCheckin(),self.photoSrc());
+    });
+
     this.highlightMarker = function () {
         marker.setIcon(self.highlightedIcon);
         marker.setAnimation(google.maps.Animation.BOUNCE);
@@ -109,6 +138,10 @@ var Marker = function (loc,idx) {
         marker.setIcon(self.defaultIcon);
         marker.setAnimation(null);
         $('#marker_'+self.idx).removeClass('highlighted-locations');
+    };
+
+    this.displayInfoMarker = function () {
+        displayInfo(marker,self.address(),self.countCheckin(),self.photoSrc());
     };
 
     this.display = ko.computed({
@@ -128,14 +161,6 @@ var Marker = function (loc,idx) {
 
 };
 
-
-
-//Just used to start the app after the map is loaded. Avoiding
-// async errors
-var startApp = function () {
-    ko.applyBindings(new ViewModel());
-};
-
 /* === Common Functions === */
 function getLocationFromAddress(addr) {
     var geocoder = new google.maps.Geocoder();
@@ -145,8 +170,185 @@ function getLocationFromAddress(addr) {
            console.log('oi?');
            return results[0].geometry.location;
        } else {
-           console.log('deu ruim');
+           $('#errorModal').css('display','block');
        }
     });
     return null;
 }
+
+function getAddressFromLocation(marker) {
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode ({location: marker.position()},function(results,status) {
+        if(status == 'OK') {
+            marker.address = ko.observable(results[0].formatted_address);
+        } else {
+            $('#errorModal').css('display','block');
+        }
+    });
+}
+
+function displayInfo(marker,address,countCheckin,photoSrc) {
+    if(infoWindow === undefined) {
+        $('#errorModal').css('display','block');
+    }
+    if (infoWindow.marker != marker) {
+        infoWindow.setContent('');
+        infoWindow.marker = marker;
+        infoWindow.addListener('closeclick', function () {
+            infoWindow.marker = null;
+        });
+
+        var photos='';
+        photoSrc.forEach(function (photo) {
+            photos+='<img src="'+ photo +'">';
+        });
+
+        infoWindow.setContent('<div>'+
+            '<h5>' + address.split(',')[0] + '</h5>'+
+            '<h6>Checkins: '+ countCheckin + '</h6>'+
+           photos +
+        '</div>');
+        infoWindow.open(map, marker);
+
+
+    }
+}
+
+var foursquare = {
+    apiClient: 'L5MXBKULNXRWBQNJOZYDEAX0503S0YQUSLF2WF5RR5V5J3SB',
+    apiSecret: 'XGM1ECMZCFGAUTSKWXT0F31J0AWPIEKE04TRY0CLNSLCME3R',
+    apiSearch:'https://api.foursquare.com/v2/venues/search?'
+};
+
+function getFoursquareInfo(marker,position) {
+    var lat = position.lat;
+    var lng = position.lng;
+    var url = foursquare.apiSearch;
+    url += 'll=' + lat + ',' + lng;
+    url += '&v=20170907';
+    url += '&client_id=' + foursquare.apiClient;
+    url += '&client_secret=' + foursquare.apiSecret;
+
+    $.ajax({
+        dataType: "json",
+        url: url,
+        data: data,
+        // success: success
+        success: function (data) {
+            marker.countCheckin = ko.observable(data.response.venues[0].stats.checkinsCount);
+            // console.log(data.response.venues[0].id);
+            // getPhotoIdByLocation(marker, data.response.venues[0].id);
+        },
+        fail: function () {
+            $('#errorModal').css('display','block');
+        }
+    });
+
+}
+
+var flickr = {
+    apiKey: '5833596b7b6fd16137ef573cf718ac93',
+    apiSecret: 'f8bc00f9c0118c28',
+    apiUrl: 'https://api.flickr.com/services/rest/?',
+    apiLoc: 'method=flickr.photos.search',
+    apiPhoto: 'method=flickr.photos.getSizes',
+    apiJson: '&format=json&nojsoncallback=1',
+    photoSize: 'Large Square'
+};
+
+function getPhotoIdByLocation(marker,position) {
+    var lat = position.lat;
+    var lng = position.lng;
+
+    var url = flickr.apiUrl;
+    url+= flickr.apiLoc;
+    url+= '&lat=' + lat + '&lon='+ lng;
+    url+= '&geo_context=1'; //Get Photos taken inside
+    url+= '&api_key='+flickr.apiKey;
+    url+= flickr.apiJson;
+
+    $.ajax({
+        url: url,
+        dataType: "json",
+        success: function (data) {
+            if(data.stat == 'ok') {
+                var ids = [];
+                for(var it = 0; it < data.photos.photo.length; ++it) {
+                    ids.push(data.photos.photo[it].id);
+                    if(it > 2) {
+                        break;
+                    }
+                }
+                getPhotoById(marker,ids)
+            } else {
+                $('#errorModal').css('display','block');
+            }
+        },
+        fail: function () {
+            $('#errorModal').css('display','block');
+        }
+    });
+}
+
+function getPhotoById(marker,ids) {
+    ids.forEach(function (id) {
+        var url = flickr.apiUrl;
+        //First, Find the ID
+        url+= flickr.apiPhoto;
+        url+= '&photo_id=' + id;
+        url+= '&api_key='+flickr.apiKey;
+        url+= flickr.apiJson;
+
+        $.ajax({
+            url: url,
+            dataType: "json",
+            success: function (data) {
+                if(data.stat == 'ok') {
+                    // getPhotoById(marker,data.photos.photo[0].id)
+                    marker.photoSrc.push(data.sizes.size[0].source);
+                } else {
+                    $('#errorModal').css('display','block');
+                }
+            },
+            fail: function () {
+                $('#errorModal').css('display','block');
+            }
+        });
+    });
+}
+
+function wikiLinks() {
+    // Wikipedia Links
+    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=';
+    wikiUrl+=city;
+    wikiUrl+='&format=json&callback=wikiCallback';
+    var wikiRequestTimeout = setTimeout(function () {
+        $wikiElem.text('Failed to get wikipedia resources')},8000);
+
+    $.ajax({
+        url: wikiUrl,
+        dataType: "jsonp",
+        success: function (response) {
+            var articleList = response[1];
+            articleList.forEach(function (article) {
+                var url = 'http://en.wikipedia.org/wiki/' + article;
+                $wikiElem.append('<li><a href="' + url + '">' +
+                    article + '</a></li>');
+            });
+            clearTimeout(wikiRequestTimeout);
+        }
+
+    });
+}
+
+//Just used to start the app after the map is loaded. Avoiding
+// async errors
+var startApp = function () {
+    try {
+        ko.applyBindings(new ViewModel());
+    }
+    catch(error){
+        console.log(error);
+        $('#errorModal').css('display','block');
+    }
+};

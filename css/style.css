@@ -25,8 +25,6 @@
  }
 
  .burger_menu {
-     max-width: 15px;
-     max-height: 15px;
      display: none;
  }
 
@@ -80,9 +78,42 @@
 
  }
 
+ .closebtn {
+     display: none;
+ }
+
+ .icons {
+     /*display: block;*/
+     max-width: 15px;
+     max-height: 15px;
+     /*margin: 5px;*/
+     position: relative;
+     top: 0;
+     right: 0;
+ }
+
  @media screen and (max-width: 1140px) {
      .menu-bar {
-         display: none;
+         height: 100%; /* 100% Full-height */
+         width: 0; /* 0 width - change this with JavaScript */
+         position: fixed; /* Stay in place */
+         z-index: 1; /* Stay on top */
+         top: 0;
+         left: 0;
+         overflow-x: hidden; /* Disable horizontal scroll */
+         padding-top: 60px; /* Place content 60px from the top */
+         transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+         padding-left: 0;
+         padding-right: 0;
+     }
+
+     .closebtn{
+         display: block;
+         position: absolute;
+         top: 0;
+         right: 25px;
+         font-size: 36px;
+         margin-left: 50px;
      }
 
      .locations-row {
@@ -90,11 +121,46 @@
      }
 
      .burger_menu {
-         display: block;
-         margin: 5px;
-         position: absolute;
-
+         display: inline;
      }
  }
 
  /*TODO Align burger menu, and give it click options :D*/
+
+ /* The Modal (background) */
+ .modal {
+     display: none; /* Hidden by default */
+     position: fixed; /* Stay in place */
+     z-index: 1; /* Sit on top */
+     left: 0;
+     top: 0;
+     width: 100%; /* Full width */
+     height: 100%; /* Full height */
+     overflow: auto; /* Enable scroll if needed */
+     background-color: rgb(0,0,0); /* Fallback color */
+     background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+ }
+
+ /* Modal Content/Box */
+ .modal-content {
+     background-color: #fefefe;
+     margin: 15% auto; /* 15% from the top and centered */
+     padding: 20px;
+     border: 1px solid #888;
+     width: 80%; /* Could be more or less, depending on screen size */
+ }
+
+ /* The Close Button */
+ .close {
+     color: #aaa;
+     float: right;
+     font-size: 28px;
+     font-weight: bold;
+ }
+
+ .close:hover,
+ .close:focus {
+     color: black;
+     text-decoration: none;
+     cursor: pointer;
+ }
