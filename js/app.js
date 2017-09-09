@@ -1,6 +1,6 @@
 var google = google || {};
 var map;
-var infoWindow = undefined;
+var infoWindow;
 
 
 
@@ -39,7 +39,7 @@ var Map = function() {
 var ViewModel = function() {
     var self = this;
 
-    var map = new Map();
+    var google_map = new Map();
 
     this.searchLocation = ko.observable('');
 
@@ -66,7 +66,7 @@ var ViewModel = function() {
 
     this.close_burgerMenu = function () {
         $('.menu-bar').css('width','0');
-    }
+    };
 
 };
 
@@ -279,7 +279,7 @@ function getPhotoIdByLocation(marker,position) {
                         break;
                     }
                 }
-                getPhotoById(marker,ids)
+                getPhotoById(marker,ids);
             } else {
                 $('#errorModal').css('display','block');
             }
@@ -314,30 +314,6 @@ function getPhotoById(marker,ids) {
                 $('#errorModal').css('display','block');
             }
         });
-    });
-}
-
-function wikiLinks() {
-    // Wikipedia Links
-    var wikiUrl = 'http://en.wikipedia.org/w/api.php?action=opensearch&search=';
-    wikiUrl+=city;
-    wikiUrl+='&format=json&callback=wikiCallback';
-    var wikiRequestTimeout = setTimeout(function () {
-        $wikiElem.text('Failed to get wikipedia resources')},8000);
-
-    $.ajax({
-        url: wikiUrl,
-        dataType: "jsonp",
-        success: function (response) {
-            var articleList = response[1];
-            articleList.forEach(function (article) {
-                var url = 'http://en.wikipedia.org/wiki/' + article;
-                $wikiElem.append('<li><a href="' + url + '">' +
-                    article + '</a></li>');
-            });
-            clearTimeout(wikiRequestTimeout);
-        }
-
     });
 }
 
