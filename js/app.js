@@ -60,8 +60,6 @@ var ViewModel = function() {
 
     this.mapOptions = ko.observableArray();
 
-    // this.menuDisplayed = ko.observable(false);
-
     this.display_burgerMenu = function () {
         $('.menu-bar').css('width','250px');
     };
