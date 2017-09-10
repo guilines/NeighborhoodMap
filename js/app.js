@@ -125,7 +125,7 @@ var Marker = function (loc,idx) {
     });
 
     marker.addListener('click', function () {
-        self.displayInfoMarker()
+        self.displayInfoMarker();
     });
 
 
