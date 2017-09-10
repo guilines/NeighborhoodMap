@@ -60,11 +60,11 @@ var ViewModel = function() {
 
     this.mapOptions = ko.observableArray();
 
-    this.display_burgerMenu = function () {
+    this.displayBurgerMenu = function () {
         $('.menu-bar').css('width','250px');
     };
 
-    this.close_burgerMenu = function () {
+    this.closeBurgerMenu = function () {
         $('.menu-bar').css('width','0');
     };
 
@@ -125,24 +125,25 @@ var Marker = function (loc,idx) {
     });
 
     marker.addListener('click', function () {
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        displayInfo(this,self.address(),self.countCheckin(),self.photoSrc());
+        self.displayInfoMarker()
     });
 
 
     this.highlightMarker = function () {
         marker.setIcon(self.highlightedIcon);
-        marker.setAnimation(google.maps.Animation.BOUNCE);
         $('#marker_'+self.idx).addClass('highlighted-locations');
     };
 
     this.defaultMarker = function () {
         marker.setIcon(self.defaultIcon);
-        marker.setAnimation(null);
         $('#marker_'+self.idx).removeClass('highlighted-locations');
     };
 
     this.displayInfoMarker = function () {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
+        setTimeout(function () {
+            marker.setAnimation(null);
+        },700);
         displayInfo(marker,self.address(),self.countCheckin(),self.photoSrc());
     };
 
