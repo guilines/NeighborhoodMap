@@ -39,7 +39,7 @@ var GoogleMap = function() {
 var ViewModel = function() {
     var self = this;
 
-    var google_map = new GoogleMap();
+    var googleMap = new GoogleMap();
 
     this.searchLocation = ko.observable('');
 
@@ -59,6 +59,8 @@ var ViewModel = function() {
     });
 
     this.mapOptions = ko.observableArray();
+
+    // this.menuDisplayed = ko.observable(false);
 
     this.display_burgerMenu = function () {
         $('.menu-bar').css('width','250px');
@@ -125,8 +127,10 @@ var Marker = function (loc,idx) {
     });
 
     marker.addListener('click', function () {
+        marker.setAnimation(google.maps.Animation.BOUNCE);
         displayInfo(this,self.address(),self.countCheckin(),self.photoSrc());
     });
+
 
     this.highlightMarker = function () {
         marker.setIcon(self.highlightedIcon);
@@ -151,9 +155,9 @@ var Marker = function (loc,idx) {
 
         write: function (status) {
             if(!status){
-                marker.setMap(null);
+                marker.setVisible(false);
             } else {
-                marker.setMap(map);
+                marker.setVisible(true);
             }
         }
 
@@ -209,8 +213,9 @@ function displayInfo(marker,address,countCheckin,photoSrc) {
            photos +
         '</div>');
         infoWindow.open(map, marker);
-
-
+        infoWindow.addListener('closeclick', function () {
+            marker.setAnimation(null);
+        });
     }
 }
 
@@ -239,7 +244,7 @@ function getFoursquareInfo(marker,position) {
             // console.log(data.response.venues[0].id);
             // getPhotoIdByLocation(marker, data.response.venues[0].id);
         },
-        fail: function () {
+        error: function () {
             $('#errorModal').css('display','block');
         }
     });
@@ -284,7 +289,7 @@ function getPhotoIdByLocation(marker,position) {
                 $('#errorModal').css('display','block');
             }
         },
-        fail: function () {
+        error: function () {
             $('#errorModal').css('display','block');
         }
     });
@@ -310,7 +315,7 @@ function getPhotoById(marker,ids) {
                     $('#errorModal').css('display','block');
                 }
             },
-            fail: function () {
+            error: function () {
                 $('#errorModal').css('display','block');
             }
         });
@@ -327,4 +332,8 @@ var startApp = function () {
         console.log(error);
         $('#errorModal').css('display','block');
     }
+};
+
+var onError = function () {
+    $('#errorModal').css('display','block');
 };
