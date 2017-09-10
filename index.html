@@ -13,16 +13,16 @@
 <body>
 <div class="container">
     <!-- Modal: Error -->
-    <div id="errorModal" class="modal">
+    <header id="errorModal" class="modal">
         <div class="modal-content">
             <!--<span class="close">&times;</span>-->
             <p>Something went wrong D:</p>
             <p>Try to refresh the page</p>
         </div>
 
-    </div>
+    </header>
 
-    <div class="row">
+    <aside class="row">
         <div class="col-md-3 row-header locations-row">
             <span class="text-row">Madrid Locations</span>
         </div>
@@ -32,8 +32,8 @@
             <img src="images/foursquare.png" alt="Foursquare Icon" class="icons">
             <img src="images/flickr.png" alt="Flickr Icon" class="icons">
         </div>
-    </div>
-    <div class="row">
+    </aside>
+    <main class="row">
         <div class="col-md-3 menu-bar">
             <input class="filter-options" id="filter" placeholder="Search" type="search"
             data-bind="textInput: searchLocation">
@@ -55,23 +55,22 @@
         <div class="col-md-9">
             <div id="map" class="map-area"></div>
         </div>
-    </div>
+    </main>
 </div>
 <footer class="col-md-12">
     <p>Powered by Foursquare, Flickr and GoogleMaps</p>
 </footer>
 
 <!--Load Scripts-->
-<script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/knockout-3.4.2.js"></script>
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/knockout-3.4.2.js"></script>
 <script src="js/app.js"></script>
 
 <script
         src="https://maps.googleapis.com/maps/api/js?libraries=places,geometry,drawing&key=AIzaSyDtr_cNX4hNvjTCs5xSL-JIGngGFzlT6ho&v=3&callback=startApp"
         async defer onerror="onError()">
 </script>
-
 
 </body>
 </html>
